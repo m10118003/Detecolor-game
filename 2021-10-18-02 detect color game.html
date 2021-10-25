@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecolor game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #page {
+            margin: 0;
+            background-color: #f06060;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #main {
+            width: 43vh;
+            height: 20vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            background-color: #ddd;
+            border-radius: 10px;            
+            margin: auto;
+        }
+        #main > div {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            margin: 20px;
+        }
+        .display {
+            position: fixed;
+            width: 100px;
+            height: 50px;
+            right: 10%;
+            top: 45%;
+            background-color: darkorange;
+            border-radius: 10px;
+            padding: 6px;
+        }
+        .btns {
+            width: 100px;
+            height: 50px;
+            position: fixed;
+            left: 10%;
+            top: 45%;
+            background-color: darkorchid;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #gamestart {
+            width: 50px;
+            height: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-self: start;
+            background-color: cornsilk;
+            border: 2px gray solid;
+            border-style: outset;
+            margin: auto;
+            padding: 2px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+        }    
+    </style>
+</head>
+<body>
+    <section id="page">
+        <div class="btns">
+            <div id="gamestart" onclick="startGame(2)">Start！</div>
+        </div>
+        <div id="main">
+    
+        </div>
+        <div class="display">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="timer">Time left: <span id="timeleft"></span></div>
+        </div>
+    </section>
+    
+
+    <script>
+        let start = document.querySelector('#gamestart')
+        let main = document.querySelector('#main')
+        let score = document.querySelector('#score')
+        let timeleft = document.querySelector('#timeleft')
+        // Set game time limit
+        let timelimit = 60
+        // game countdown timer
+        let timer
+        //Store variable for answer
+        let ans
+        // Game start, make the quest renew, and countdown, hide the start btn
+        function startGame(i) {
+            timer = setInterval(timeruning, 1000)
+            timeleft.innerHTML = timelimit
+            score.innerHTML = 0
+            makeBlock(i);
+            start.style.display = 'none';
+        }
+        // Renew the function for quest i(index) = make the square numbers of array (i * i)
+        function makeBlock(i) {
+            // set quest border, make the square numbers according the content to change size
+            main.style.width = `calc(${i} * 140px)`
+            main.style.height = `calc(${i} * 140px)`
+            // clear quest border content, let the square to generate
+            main.innerHTML = ''
+            // blocks = total square numbers
+            let blocks = i * i
+            // Random generate squares for response
+            ans = Math.floor(Math.random()*blocks)
+            // Makes the colors of square random
+            let r = Math.floor(Math.random()*128) + 64 //64~191
+            let g = Math.floor(Math.random()*128) + 64 
+            let b = Math.floor(Math.random()*128) + 64 
+
+            // According the answer, change the opacity of square
+            if (parseInt(score.innerHTML) < 10) {
+                var difficulty = 0.3
+            } else if (parseInt(score.innerHTML) < 15) {
+                var difficulty = 0.5
+            } else {
+                var difficulty = 0.8
+            } 
+            // Print the squares and display
+            for (let i = 0; i< blocks; i++) {
+                if (i == ans) {
+                    // Template literals 1
+                    main.innerHTML = main.innerHTML + `
+                    <div style="background-color:rgb(` + r +`,`+ g + `,` + b +`); opacity: ${difficulty};" onclick="check(${i})"></div>`                    
+                } else {
+                    // Template literals 2
+                    main.innerHTML = main.innerHTML + `
+                    <div style="background-color:rgb(${r},${g},${b});" onclick="check(${i})"></div>` 
+                }
+            }            
+        }
+        // Check the user for hit the square correct
+        function check(guess) {
+            if (guess == ans) {
+                score.innerHTML = parseInt(score.innerHTML) + 1
+            }    
+            // According the answer, change the square numbers
+            if (parseInt(score.innerHTML) < 5) {
+                makeBlock(2)
+            } else if (parseInt(score.innerHTML) < 10) {
+                makeBlock(3)
+            } else if (parseInt(score.innerHTML) < 15) {
+                makeBlock(4)
+            } else {
+                makeBlock(5)
+            }
+            
+        }
+        // Make the game end 
+        function timeruning() {
+            timeleft.innerHTML = parseInt(timeleft.innerHTML) - 1
+            // If timeleft = 0, means the time's up, game end
+            if (parseInt(timeleft.innerHTML) == 0) {
+                clearInterval(timer)
+                main.innerHTML = ''
+                alert(`Game over！ You got ${score.innerHTML} points`)
+                start.style.display = 'block';
+            }
+        }
+    
+    </script>
+</body>
+</html>
